@@ -1,0 +1,125 @@
+<html>
+	<head>
+		<title>Getting coordinates from a Leaflet map</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.css" />
+		<script type="module" src="./lookup-module.js"></script>
+		<script src="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.js"></script>
+
+  <!-- require ArcGIS REST JS libraries from https://unpkg.com -->
+  <script src="https://unpkg.com/@esri/arcgis-rest-request@2.13.2/dist/umd/request.umd.js"></script>
+  <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@2.13.2/dist/umd/feature-layer.umd.js"></script>
+
+		<style type="text/css">
+		 	html, body, #map{
+		 		height: 100%;
+		 		padding: 0;
+		 		margin: 0;
+		 	}
+		</style>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script type="module">
+
+    const lookups = [
+      { "name": "Watersheds",
+        "lookup": "watershed",
+        "outFields": 'mde6name, mde8name', // can provide a list of needed fields or leave blank to get all fields
+        "url": "https://geodata.md.gov/imap/rest/services/Hydrology/MD_Watersheds/FeatureServer/1"
+      },
+      { "name": "Congressional Districts",
+        "lookup": "congressional_district",
+        "outFields": 'district, label, name',
+        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_ElectionBoundaries/FeatureServer/0"
+      },
+      { "name": "Legislative Districts",
+        "lookup": "legislative_district",
+        "outFields": 'district',
+        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_ElectionBoundaries/FeatureServer/1"
+      },
+      { "name": "County Boundaries",
+        "lookup": "county",
+        "outFields": 'county, county_fip',
+        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_PoliticalBoundaries/FeatureServer/1"
+      },
+      { "name": "SHA Maintenance Shops",
+        "lookup": "shop",
+        "outFields": 'maint_shop, mshops_id, shop_name',
+        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_MDOTSHAMaintenanceShopFacilities/FeatureServer/1"
+      },
+      { "name": "SHA Districts",
+        "lookup": "sha_district",
+        "outFields": 'district_number, district_counties',
+        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_MDOTSHADistrictBoundaries/FeatureServer/0"
+      }
+    ];
+
+
+    const performQueries = (lat, lng) => {
+
+      const queries = lookups.map( m => {
+
+          return arcgisRest.queryFeatures({
+            url: m.url,
+            geometryType: 'esriGeometryPoint',
+            geometry: `${lng},${lat}`,
+            inSR: 4326,
+            spatialRel: 'esriSpatialRelIntersects',
+            outFields: m.outFields ? m.outFields :  '*',
+            where: "1=1"
+          })
+          .then( d => {
+
+            //appending the lookup so it's easier to distinguish to what query the results are from
+            d.lookup = m.lookup;
+            return d;
+          } );
+        });
+
+
+      const getData = async () => {
+        const d = await Promise.all(queries);
+        console.log('All requests', {d});
+        const attributes = d.reduce((acc, rec) => Object.assign(acc,{ [rec.lookup]: rec.features[0].attributes}), {});
+        console.log('ATTRIBUTES', {attributes});
+        return JSON.stringify(attributes);
+      };
+
+      return getData();
+    };
+
+			function main() {
+
+				var options = {
+					center: [39.3500, -76.805878],
+					zoom: 13
+				}
+
+				var map = L.map('map', options);
+
+				L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {attribution: 'CARTO'})
+				.addTo(map);
+
+				map.on('click',
+					function(e){
+						var coord = e.latlng.toString().split(',');
+						const lat = coord[0].split('(');
+						const lng = coord[1].split(')');
+            console.log({coord, lat, lng});
+						console.log("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0]);
+
+          performQueries(lat[1],lng[0])
+            .then( results => {
+              const popup = L.popup()
+                .setLatLng([lat[1], lng[0]])
+                .setContent("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0] +'\n' + results)
+                .openOn(map);
+            });
+
+					});
+			}
+			window.onload = main;
+		</script>
+	</body>
+</html>
