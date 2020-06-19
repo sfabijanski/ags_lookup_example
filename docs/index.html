@@ -81,7 +81,8 @@
       const getData = async () => {
         const d = await Promise.all(queries);
         console.log('All requests', {d});
-        const attributes = d.reduce((acc, rec) => Object.assign(acc,{ [rec.lookup]: rec.features[0].attributes}), {});
+        const attributes = d.reduce((acc, rec) => Object.assign(acc,
+          { [rec.lookup]: (rec.features[0]) ? rec.features[0].attributes : {} }), {});
         console.log('ATTRIBUTES', {attributes});
         return attributes;
       };
