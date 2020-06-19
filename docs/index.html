@@ -22,16 +22,57 @@
 		<div id="map"></div>
 		<script type="module">
 
+
+    // Note the _useExtent_ flag. This is applied on point and line services so we can capture a feature with intersection
+    // The process is naive in that we are merely grabbing the first item in the return result without comparing distance to click
+    // To experiment with the fields available in each service, you can either explore the feature service URL endpoint,
+    // or change the _outFields_ to '*' to get them all back
     const lookups = [
       { "name": "Watersheds",
         "lookup": "watershed",
         "outFields": 'mde6name, mde8name', // can provide a list of needed fields or leave blank to get all fields
         "url": "https://geodata.md.gov/imap/rest/services/Hydrology/MD_Watersheds/FeatureServer/1"
       },
+      { "name": "Milepoints",
+        "lookup": "milepoints",
+        "outFields": 'routeid,id_rte_no,longitude,latitude',
+        "useExtent": true,
+        "url": "https://maps.roads.maryland.gov/arcgis/rest/services/Milepoints/Milepoints_Maryland_MDOTSHA/MapServer/1"
+      },
+      { "name": "Local CenterLine",
+        "lookup": "local_centerline",
+        "outFields": 'streetname,streettype,zip_l,zip_r',
+        "useExtent": true,
+        "url": "https://geodata.md.gov/appdata/rest/services/LocalCenterline/MD_LocalCenterline/MapServer/0"
+      },
+      { "name": "Maintenance Authority",
+        "lookup": "maintenance_authority",
+        "outFields": 'govt_control,maintenance_responsiblity',
+        "useExtent": true,
+        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_HighwayPerformanceMonitoringSystem/MapServer/3"
+      },
+      { "name": "Admin Class",
+        "lookup": "admin_class",
+        "outFields": 'admin_class,admin_class_desc',
+        "useExtent": true,
+        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_RoadwayAdministrativeClassification/MapServer/0"
+      },
+      { "name": "Access Control",
+        "lookup": "access_control",
+        "outFields": 'access_control,access_control_desc',
+        "useExtent": true,
+        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_HighwayPerformanceMonitoringSystem/MapServer/0"
+      },
       { "name": "Municipalities",
         "lookup": "municipalities",
         "outFields": 'municipali',
         "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_PoliticalBoundaries/MapServer/2"
+      },
+      { "name": "Road Names",
+        "lookup": "road_names",
+        "outFields": 'routeid, road_name',
+        "useExtent": true,
+        "url": "https://maps.roads.maryland.gov/arcgis/rest/services/RoadNames/RoadNames_Maryland_MDOTSHA/MapServer/0"
       },
       { "name": "Congressional Districts",
         "lookup": "congressional_district",
