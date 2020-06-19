@@ -183,7 +183,11 @@
               } );
               const popup = L.popup()
                 .setLatLng([lat[1], lng[0]])
-                .setContent("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0] + '\n' + els.join('\n'))
+                .setContent(
+                  '<div style="margin-top: 20px; max-height: 460px; overflow-y: scroll" >' +
+                  'You clicked the map at latitude: ' + lat[1] +
+                  ' and longitude:' + lng[0] + '\n' + els.join('\n') +
+                  '</div>')
                 .openOn(map);
             });
 
