@@ -60,15 +60,28 @@
       }
     ];
 
+    const extentStringFromLatLng = (lat, lng, distanceInMeters) => {
+      const offset = distanceInMeters / 2;
+      const DEM = 111111; // estimate of meters in 1 degree
+      const minLng =  lng - (offset / (DEM * (Math.cos(10))));
+      const maxLng =  lng + (offset / (DEM * (Math.cos(10))));
+      const minLat = lat - (offset/DEM);
+      const maxLat = lat + (offset/DEM);
+
+      return `${minLng}, ${minLat}, ${maxLng}, ${maxLat}`
+    };
+
 
     const performQueries = (lat, lng) => {
 
       const queries = lookups.map( m => {
 
+          // create a 100 meter extent buffer for the point
+          const extent = extentStringFromLatLng( lat, lng, 100 );
           return arcgisRest.queryFeatures({
             url: m.url,
-            geometryType: 'esriGeometryPoint',
-            geometry: `${lng},${lat}`,
+            geometryType: (m.useExtent) ? 'esriGeometryEnvelope' : 'esriGeometryPoint',
+            geometry: (m.useExtent) ? extent : `${lng},${lat}`,
             inSR: 4326,
             spatialRel: 'esriSpatialRelIntersects',
             outFields: m.outFields ? m.outFields :  '*',
