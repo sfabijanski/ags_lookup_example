@@ -83,7 +83,7 @@
         console.log('All requests', {d});
         const attributes = d.reduce((acc, rec) => Object.assign(acc,{ [rec.lookup]: rec.features[0].attributes}), {});
         console.log('ATTRIBUTES', {attributes});
-        return JSON.stringify(attributes);
+        return attributes;
       };
 
       return getData();
@@ -109,11 +109,21 @@
             console.log({coord, lat, lng});
 						console.log("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0]);
 
+
           performQueries(lat[1],lng[0])
             .then( results => {
+              const els = [];
+              const parsed = Object.keys(results).map( l => {
+                els.push(`<h3 style="padding-bottom: 0;margin-bottom:0;">${l}</h3>`);
+                els.push('<ul style="margin: 0">');
+                Object.keys(results[l]).map( d =>  {
+                  els.push(`<li><em>${d}</em>: ${results[l][d]}</li>`);
+                });
+                els.push('</ul>');
+              } );
               const popup = L.popup()
                 .setLatLng([lat[1], lng[0]])
-                .setContent("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0] +'\n' + results)
+                .setContent("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0] + '\n' + els.join('\n'))
                 .openOn(map);
             });
 
