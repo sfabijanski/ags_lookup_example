@@ -1,30 +1,30 @@
 <html>
-	<head>
-		<title>Getting coordinates from a Leaflet map</title>
-		<meta charset="utf-8">
-		<link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.css" />
-		<script type="module" src="./lookup-module.js"></script>
-		<script src="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.js"></script>
+  <head>
+    <title>Getting coordinates from a Leaflet map</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.css" />
+    <script type="module" src="./lookup-module.js"></script>
+    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.js"></script>
 
   <!-- require ArcGIS REST JS libraries from https://unpkg.com -->
   <script src="https://unpkg.com/@esri/arcgis-rest-request@2.13.2/dist/umd/request.umd.js"></script>
   <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@2.13.2/dist/umd/feature-layer.umd.js"></script>
 
-		<style type="text/css">
-		 	html, body, #map{
-		 		height: 100%;
-		 		padding: 0;
-		 		margin: 0;
-		 	}
+    <style type="text/css">
+      html, body, #map{
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
 
       .leaflet-container.wait-cursor-enabled {
         cursor: wait !important;
       }
-		</style>
-	</head>
-	<body>
-		<div id="map"></div>
-		<script type="module">
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script type="module">
 
 
     // Note the _useExtent_ flag. This is applied on point and line services so we can capture a feature with intersection
@@ -153,26 +153,26 @@
       return getData();
     };
 
-			function main() {
+      function main() {
 
-				var options = {
-					center: [39.3500, -76.805878],
-					zoom: 13
-				}
+        var options = {
+          center: [39.3500, -76.805878],
+          zoom: 13
+        }
 
-				var map = L.map('map', options);
+        var map = L.map('map', options);
 
-				L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {attribution: 'CARTO'})
-				.addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {attribution: 'CARTO'})
+        .addTo(map);
 
-				map.on('click',
-					function(e){
+        map.on('click',
+          function(e){
             L.DomUtil.addClass(map._container, 'wait-cursor-enabled');
             var coord = e.latlng.toString().split(',');
-						const lat = coord[0].split('(');
-						const lng = coord[1].split(')');
+            const lat = coord[0].split('(');
+            const lng = coord[1].split(')');
             console.log({coord, lat, lng});
-						console.log("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0]);
+            console.log("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0]);
 
 
           performQueries(lat[1],lng[0])
@@ -198,9 +198,9 @@
                 .openOn(map);
             });
 
-					});
-			}
-			window.onload = main;
-		</script>
-	</body>
+          });
+      }
+      window.onload = main;
+    </script>
+  </body>
 </html>
