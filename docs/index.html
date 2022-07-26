@@ -1,14 +1,19 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Getting coordinates from a Leaflet map</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.css" />
-    <script type="module" src="./lookup-module.js"></script>
-    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet/v0.7.7/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+      integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+      integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
 
-  <!-- require ArcGIS REST JS libraries from https://unpkg.com -->
-  <script src="https://unpkg.com/@esri/arcgis-rest-request@2.13.2/dist/umd/request.umd.js"></script>
-  <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@2.13.2/dist/umd/feature-layer.umd.js"></script>
+    <!-- require polyfills for fetch and Promise from https://polyfill.io -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es5%2Cfetch%2CPromise"></script>
+
+    <!-- require ArcGIS REST JS libraries from https://unpkg.com -->
+    <script src="https://unpkg.com/@esri/arcgis-rest-request@3.4.3/dist/umd/request.umd.js"></script>
+    <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@3.4.3/dist/umd/feature-layer.umd.js"></script>
 
     <style type="text/css">
       html, body, #map{
