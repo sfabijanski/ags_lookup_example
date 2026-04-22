@@ -3,23 +3,33 @@
   <head>
     <title>Getting coordinates from a Leaflet map</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-      integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-      integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- require polyfills for fetch and Promise from https://polyfill.io -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es5%2Cfetch%2CPromise"></script>
-
-    <!-- require ArcGIS REST JS libraries from https://unpkg.com -->
-    <script src="https://unpkg.com/@esri/arcgis-rest-request@3.4.3/dist/umd/request.umd.js"></script>
-    <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@3.4.3/dist/umd/feature-layer.umd.js"></script>
+  <!-- require ArcGIS REST JS libraries from https://unpkg.com -->
+  <script src="https://unpkg.com/@esri/arcgis-rest-request@3.6.0/dist/umd/request.umd.js"></script>
+  <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@3.6.0/dist/umd/feature-layer.umd.js"></script>
 
     <style type="text/css">
       html, body, #map{
         height: 100%;
         padding: 0;
         margin: 0;
+      }
+
+      .leaflet-grab {
+        cursor: pointer !important;
+      }
+
+      .leaflet-grab:active {
+        cursor: grabbing !important;
+      }
+
+      /* Maintain the grabbing hand only while dragging */
+      .leaflet-dragging .leaflet-grab {
+        cursor: grabbing !important;
       }
 
       .leaflet-container.wait-cursor-enabled {
@@ -40,7 +50,7 @@
       { "name": "Watersheds",
         "lookup": "watershed",
         "outFields": 'mde6name, mde8name', // can provide a list of needed fields or leave blank to get all fields
-        "url": "https://geodata.md.gov/imap/rest/services/Hydrology/MD_Watersheds/FeatureServer/1"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Hydrology/MD_Watersheds/FeatureServer/1"
       },
       { "name": "Milepoints",
         "lookup": "milepoints",
@@ -52,30 +62,30 @@
         "lookup": "local_centerline",
         "outFields": 'streetname,streettype,zip_l,zip_r',
         "useExtent": true,
-        "url": "https://geodata.md.gov/appdata/rest/services/LocalCenterline/MD_LocalCenterline/MapServer/0"
+        "url": "https:/mdgeodata.md.gov/appdata/rest/services/LocalCenterline/MD_LocalCenterline/MapServer/0"
       },
       { "name": "Maintenance Authority",
         "lookup": "maintenance_authority",
         "outFields": 'govt_control,maintenance_responsiblity',
         "useExtent": true,
-        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_HighwayPerformanceMonitoringSystem/MapServer/3"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Transportation/MD_HighwayPerformanceMonitoringSystem/MapServer/3"
       },
       { "name": "Admin Class",
         "lookup": "admin_class",
         "outFields": 'admin_class,admin_class_desc',
         "useExtent": true,
-        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_RoadwayAdministrativeClassification/MapServer/0"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Transportation/MD_RoadwayAdministrativeClassification/MapServer/0"
       },
       { "name": "Access Control",
         "lookup": "access_control",
         "outFields": 'access_control,access_control_desc',
         "useExtent": true,
-        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_HighwayPerformanceMonitoringSystem/MapServer/0"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Transportation/MD_HighwayPerformanceMonitoringSystem/MapServer/0"
       },
       { "name": "Municipalities",
         "lookup": "municipalities",
-        "outFields": 'municipali',
-        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_PoliticalBoundaries/MapServer/2"
+        "outFields": 'MUN_NAME',
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Boundaries/MD_PoliticalBoundaries/MapServer/2"
       },
       { "name": "Road Names",
         "lookup": "road_names",
@@ -86,17 +96,17 @@
       { "name": "Congressional Districts",
         "lookup": "congressional_district",
         "outFields": 'district, label, name',
-        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_ElectionBoundaries/FeatureServer/0"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Boundaries/MD_ElectionBoundaries/FeatureServer/0"
       },
       { "name": "Legislative Districts",
         "lookup": "legislative_district",
         "outFields": 'district',
-        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_ElectionBoundaries/FeatureServer/1"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Boundaries/MD_ElectionBoundaries/FeatureServer/1"
       },
       { "name": "County Boundaries",
         "lookup": "county",
         "outFields": 'county, county_fip',
-        "url": "https://geodata.md.gov/imap/rest/services/Boundaries/MD_PoliticalBoundaries/FeatureServer/1"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Boundaries/MD_PoliticalBoundaries/FeatureServer/1"
       },
       { "name": "SHA Maintenance Shops",
         "lookup": "shop",
@@ -106,7 +116,7 @@
       { "name": "SHA Districts",
         "lookup": "sha_district",
         "outFields": 'district_number, district_counties',
-        "url": "https://geodata.md.gov/imap/rest/services/Transportation/MD_MDOTSHADistrictBoundaries/FeatureServer/0"
+        "url": "https:/mdgeodata.md.gov/imap/rest/services/Transportation/MD_MDOTSHADistrictBoundaries/FeatureServer/0"
       }
     ];
 
@@ -135,6 +145,7 @@
             inSR: 4326,
             spatialRel: 'esriSpatialRelIntersects',
             outFields: m.outFields ? m.outFields :  '*',
+            returnGeometry: false, //false improves perforamance if we don't actually need the geometries
             where: "1=1"
           })
           .then( d => {
@@ -142,6 +153,15 @@
             //appending the lookup so it's easier to distinguish to what query the results are from
             d.lookup = m.lookup;
             return d;
+          } ).catch(e => {
+            console.log(e.name);
+            console.log(e.message);
+            return {
+              lookup: m.lookup,
+              features: [
+                { attributes: { info: 'Error encountered.', message: e.message } }
+              ]
+            };
           } );
         });
 
@@ -179,6 +199,7 @@
             console.log({coord, lat, lng});
             console.log("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0]);
 
+            const marker = L.marker([lat[1], lng[0]]).addTo(map);
 
           performQueries(lat[1],lng[0])
             .then( results => {
