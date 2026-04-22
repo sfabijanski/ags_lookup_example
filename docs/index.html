@@ -199,6 +199,7 @@
             console.log({coord, lat, lng});
             console.log("You clicked the map at latitude: " + lat[1] + " and longitude:" + lng[0]);
 
+            const marker = L.marker([lat[1], lng[0]]).addTo(map);
 
           performQueries(lat[1],lng[0])
             .then( results => {
