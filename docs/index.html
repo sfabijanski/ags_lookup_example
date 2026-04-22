@@ -153,6 +153,15 @@
             //appending the lookup so it's easier to distinguish to what query the results are from
             d.lookup = m.lookup;
             return d;
+          } ).catch(e => {
+            console.log(e.name);
+            console.log(e.message);
+            return {
+              lookup: m.lookup,
+              features: [
+                { attributes: { info: 'Error encountered.', message: e.message } }
+              ]
+            };
           } );
         });
 
