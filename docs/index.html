@@ -145,6 +145,7 @@
             inSR: 4326,
             spatialRel: 'esriSpatialRelIntersects',
             outFields: m.outFields ? m.outFields :  '*',
+            returnGeometry: false, //false improves perforamance if we don't actually need the geometries
             where: "1=1"
           })
           .then( d => {
