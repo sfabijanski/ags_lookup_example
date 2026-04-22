@@ -18,6 +18,19 @@
         margin: 0;
       }
 
+      .leaflet-grab {
+        cursor: pointer !important;
+      }
+
+      .leaflet-grab:active {
+        cursor: grabbing !important;
+      }
+
+      /* Maintain the grabbing hand only while dragging */
+      .leaflet-dragging .leaflet-grab {
+        cursor: grabbing !important;
+      }
+
       .leaflet-container.wait-cursor-enabled {
         cursor: wait !important;
       }
